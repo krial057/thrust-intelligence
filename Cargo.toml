@@ -1,9 +1,21 @@
 [package]
-name = "RsMISP"
+name = "rs_misp"
 version = "0.1.0"
 authors = ["Alain Krier <krial057@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+surf = "2.0.0-alpha.2"
+async-std = {version = "1"}
+url = "2.1.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0.16"
+http-types = "1.2.0"
+uuid = { version = "0.8", features = ["serde", "v4"] }
+log = "0.4.8"
+chrono = "0.4.11"
+
+[dev-dependencies]
+femme = "1.3.0"
+async-std = { version = "1", features = ["attributes"] }
