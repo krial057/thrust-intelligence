@@ -1,11 +1,11 @@
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 use surf::http_types::headers::{HeaderName, CONTENT_TYPE};
 use url::Url;
 
 use crate::error::MispResult;
-use crate::model::event::EventIdentifier;
 use crate::model::server_info::ServerInfo;
-use crate::requests::event::RemoteEventRequest;
+use crate::requests::api::EventsApi;
 
 /// A MISP client. Used to connect to a MISP Server.
 ///
@@ -33,7 +33,7 @@ impl MISP {
         }
     }
 
-    pub(crate) async fn internal_api_call<T: DeserializeOwned>(
+    pub(crate) async fn internal_api_call_get<T: DeserializeOwned>(
         &self,
         endpoint: impl AsRef<str>,
     ) -> MispResult<T> {
@@ -54,16 +54,41 @@ impl MISP {
         Ok(serde_json::from_slice::<T>(&body_bytes)?)
     }
 
-    pub async fn server_version(&self) -> MispResult<ServerInfo> {
-        Ok(self.internal_api_call("servers/getVersion.json").await?)
+    pub(crate) async fn internal_api_call_post<T: DeserializeOwned>(
+        &self,
+        endpoint: impl AsRef<str>,
+        json: &impl Serialize,
+    ) -> MispResult<T> {
+        // TODO replace when https://github.com/http-rs/http-types/pull/107 merges into surf
+        let authorization_header_name: HeaderName = "authorization".parse().unwrap();
+        let user_agent_header_name: HeaderName = "user-agent".parse().unwrap();
+        let accept_header_name: HeaderName = "accept".parse().unwrap();
+        /*
+                println!(
+                    "Sending json: {:?}",
+                    serde_json::to_string_pretty(json).unwrap()
+                );
+        */
+        let endpoint_url = self.base_url.join(endpoint.as_ref())?;
+        let body_bytes = surf::post(endpoint_url)
+            .set_header(authorization_header_name, &self.auth_token)
+            .set_header(accept_header_name, "application/json")
+            .set_header(CONTENT_TYPE, "application/json")
+            .set_header(user_agent_header_name, "rs_misp")
+            .body_json(json)?
+            .recv_bytes()
+            .await?;
+        Ok(serde_json::from_slice::<T>(&body_bytes)?)
     }
 
-    pub async fn get_events(&self) -> MispResult<String> {
-        Ok(self.internal_api_call("events").await?)
+    pub async fn server_info(&self) -> MispResult<ServerInfo> {
+        Ok(self
+            .internal_api_call_get("servers/getVersion.json")
+            .await?)
     }
 
-    pub fn event(&self, event: impl Into<EventIdentifier>) -> RemoteEventRequest<'_> {
-        RemoteEventRequest::new(self, event.into())
+    pub fn events(&self) -> EventsApi<'_> {
+        EventsApi::new(self)
     }
 }
 

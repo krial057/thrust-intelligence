@@ -1,8 +1,10 @@
 mod client;
 mod error;
-pub mod local;
 pub mod model;
 pub mod requests;
+
+#[macro_use]
+mod util;
 
 pub use client::MISP;
 pub use error::{MispError, MispResult};

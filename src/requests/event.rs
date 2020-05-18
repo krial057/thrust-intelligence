@@ -1,6 +1,5 @@
 use crate::model::event::{EventFull, EventFullEmbedded, EventIdentifier};
 use crate::{MispResult, MISP};
-use std::cell::RefCell;
 use uuid::Uuid;
 
 pub enum DirectOrIndirectIdentifier {
@@ -9,61 +8,52 @@ pub enum DirectOrIndirectIdentifier {
 }
 
 /// The Request's lifetime is bound to the client's lifetime
-pub struct RemoteEventRequest<'a> {
+pub struct EventRequest<'a> {
     id: EventIdentifier,
     misp_client: &'a MISP,
-    cached_local: RefCell<Option<EventFull>>,
+    cached_local: Option<EventFull>,
 }
 
-impl RemoteEventRequest<'_> {
-    pub fn new<'a>(misp_client: &'a MISP, id: EventIdentifier) -> RemoteEventRequest<'a> {
-        RemoteEventRequest {
+impl EventRequest<'_> {
+    pub fn new<'a>(misp_client: &'a MISP, id: EventIdentifier) -> EventRequest<'a> {
+        EventRequest {
             id,
             misp_client,
-            cached_local: RefCell::new(None),
+            cached_local: None,
         }
     }
 
-    async fn download_to_cache(&self) -> MispResult<EventFull> {
-        let embedded_event: EventFullEmbedded = self
+    async fn download_to_cache(&mut self) -> MispResult<EventFull> {
+        let event: EventFullEmbedded = self
             .misp_client
-            .internal_api_call(format!("events/view/{}", self.id.to_url_id()))
+            .internal_api_call_get(format!("events/view/{}", self.id.to_url_id()))
             .await?;
-        Ok(embedded_event.event)
+        Ok(event.event)
     }
 
-    async fn cache_if_needed(&self) -> MispResult<()> {
-        if self.cached_local.borrow().is_none() {
-            *self.cached_local.borrow_mut() = Some(self.download_to_cache().await?);
+    async fn cached(&mut self) -> MispResult<&EventFull> {
+        if self.cached_local.is_none() {
+            self.cached_local = Some(self.download_to_cache().await?);
         };
-        Ok(())
+        Ok(self.cached_local.as_ref().unwrap())
     }
 
-    pub async fn get(&self) -> MispResult<EventFull> {
-        self.cache_if_needed().await?;
-        let event_ref = self.cached_local.borrow();
-        Ok(event_ref.as_ref().unwrap().clone())
+    pub async fn retrieve(&mut self) -> MispResult<EventFull> {
+        let event_ref = self.cached().await?;
+        Ok(event_ref.clone())
     }
 
-    pub async fn id(&self) -> MispResult<u64> {
+    pub async fn id(&mut self) -> MispResult<u64> {
         match self.id {
-            EventIdentifier::Global(_) => {
-                self.cache_if_needed().await?;
-                let event_ref = self.cached_local.borrow();
-                Ok(event_ref.as_ref().unwrap().id())
-            }
+            EventIdentifier::Global(_) => Ok(self.cached().await?.id()),
             EventIdentifier::Local(id) => Ok(id),
         }
     }
 
-    pub async fn uuid(&self) -> MispResult<Uuid> {
+    pub async fn uuid(&mut self) -> MispResult<Uuid> {
         match self.id {
             EventIdentifier::Global(uuid) => Ok(uuid),
-            EventIdentifier::Local(_) => {
-                self.cache_if_needed().await?;
-                let event_ref = self.cached_local.borrow();
-                Ok(event_ref.as_ref().unwrap().uuid())
-            }
+            EventIdentifier::Local(_) => Ok(self.cached().await?.uuid()),
         }
     }
 }

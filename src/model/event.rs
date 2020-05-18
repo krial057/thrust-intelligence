@@ -1,6 +1,6 @@
 use super::attribute::AttributeFull;
 use super::organization::OrganizationTemporary;
-use super::{datetime_to_epoch, datetime_to_mispdate, number_embedded_in_string};
+use crate::util::{date_to_mispdate, datetime_to_epoch, number_embedded_in_string};
 use chrono::{Date, DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -68,7 +68,7 @@ pub struct Event {
     id: u64,
     #[serde(with = "number_embedded_in_string")]
     org_id: u64,
-    #[serde(with = "datetime_to_mispdate")]
+    #[serde(with = "date_to_mispdate")]
     date: Date<Utc>,
     info: String,
     //#[serde(with = "number_embedded_in_string")]
@@ -124,7 +124,7 @@ pub struct EventFull {
     tags: Value,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct EventFullEmbedded {
     #[serde(rename = "Event")]
     pub event: EventFull,
@@ -138,6 +138,10 @@ impl Event {
     pub fn uuid(&self) -> Uuid {
         self.uuid
     }
+
+    pub fn info(&self) -> &str {
+        &self.info
+    }
 }
 
 impl EventFull {
@@ -147,5 +151,9 @@ impl EventFull {
 
     pub fn uuid(&self) -> Uuid {
         self.event.uuid()
+    }
+
+    pub fn info(&self) -> &str {
+        self.event.info()
     }
 }

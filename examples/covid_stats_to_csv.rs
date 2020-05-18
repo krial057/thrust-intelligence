@@ -1,16 +1,8 @@
 extern crate rs_misp;
 
+use chrono::{Duration, Utc};
 use rs_misp::*;
 use std::env;
-
-/*
-pub async fn get_a_single_event(misp: &MISP) {
-    let event = misp
-        .event(1188)
-        .await
-        .map_err(|e| println!("Coudln't fetch event: {}", e));
-}
-*/
 
 #[async_std::main]
 async fn main() -> rs_misp::MispResult<()> {
@@ -21,10 +13,18 @@ async fn main() -> rs_misp::MispResult<()> {
         env::var("MISP_AUTH_TOKEN").expect("Please set the MISP_AUTH_TOKEN environment variable");
 
     let misp = MISP::new(base_url, auth_token);
-    let mut test = misp.events().get(1188);
-    let id1 = test.uuid().await?;
-    let id2 = test.uuid().await?;
-    //let id = misp.event(1188).uuid().await?;
-    println!("{} {}", id1, id2);
+    let events = misp
+        .events()
+        .list()
+        .from_organization("CIRCL")
+        .containing_info("CSSE COVID-19 daily report")
+        .after(Utc::today() - Duration::days(3))
+        //.limit(1)
+        .retrieve()
+        .await?;
+
+    for event in events {
+        println!("{}", event.info());
+    }
     Ok(())
 }
