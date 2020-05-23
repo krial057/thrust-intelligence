@@ -5,10 +5,13 @@
 [![Minimum rustc version](https://img.shields.io/badge/rustc-1.36.0+-lightgray.svg)](#rust-version-requirements)
 [![CI](https://github.com/krial057/rs_misp/workflows/CI/badge.svg)](https://github.com/krial057/rs_misp/actions?query=workflow%3ACI)
 
- `rs_misp` is a client library to communicate with a [MISP](https://www.misp-project.org/)
+ `rs_misp` is an unofficial client library to communicate with a [MISP](https://www.misp-project.org/)
  server instance.
- Its focus is to be easy to use, performant and typed.
+ Its focus is to be easy to use, performant and strongly typed.
  
+ __This library is far from production-ready! Currently, it can almost only run the simple example provided below.__
+ 
+ *This project is unofficial and not associated with the [MISP project](https://www.misp-project.org/).*
  ## Example
  A simple example fetching covid deaths in Luxembourg from the past 7 days using the
  COVID-19 MISP

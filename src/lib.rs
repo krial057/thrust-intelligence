@@ -7,7 +7,7 @@
 //! # Example
 //! A simple example fetching covid deaths in Luxembourg from the past 7 days using the
 //! COVID-19 MISP
-//! ```
+//! ```no_run
 //! use chrono::{Duration, Utc};
 //! use rs_misp::*;
 //! use std::env;
