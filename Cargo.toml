@@ -2,6 +2,11 @@
 name = "rs_misp"
 version = "0.1.0"
 authors = ["Alain Krier <krial057@gmail.com>"]
+license = "MIT"
+description = "An unofficial client library to communicate with a MISP(https://www.misp-project.org/) server instance."
+homepage = "https://github.com/krial057/rs_misp"
+repository = "https://github.com/krial057/rs_misp"
+readme = "README.md"
 edition = "2018"
 
 [dependencies]

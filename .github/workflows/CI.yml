@@ -39,7 +39,6 @@ jobs:
           - stable
           - beta
           - nightly
-          - 1.39.0
 
         os:
           - ubuntu-latest
