@@ -4,6 +4,7 @@ use super::organization::{OrganizationIdentifier, OrganizationTemporary};
 use super::serialization_helpers::{
     date_to_mispdate, datetime_to_epoch, number_embedded_in_string,
 };
+use crate::model::threat_level::ThreatLevel;
 use chrono::{Date, DateTime, Utc};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::Value;
@@ -42,8 +43,7 @@ pub struct Event {
     sharing_group_id: u64,
     proposal_email_lock: bool,
     locked: bool,
-    #[serde(with = "number_embedded_in_string")]
-    threat_level_id: u64,
+    threat_level_id: ThreatLevel,
     #[serde(with = "datetime_to_epoch")]
     publish_timestamp: DateTime<Utc>,
     //#[serde(with = "datetime_to_epoch")]
@@ -209,9 +209,8 @@ impl Event {
         self.locked
     }
 
-    pub fn threat_level_id(&self) -> u64 {
-        // TODO Return Thread Level Identifier instead of u64
-        self.threat_level_id
+    pub fn threat_level(&self) -> &ThreatLevel {
+        &self.threat_level_id
     }
 
     pub fn publish_timestamp(&self) -> &DateTime<Utc> {
@@ -302,9 +301,8 @@ impl EventFull {
         self.event.locked()
     }
 
-    pub fn threat_level_id(&self) -> u64 {
-        // TODO Return Thread Level Identifier instead of u64
-        self.event.threat_level_id()
+    pub fn threat_level(&self) -> &ThreatLevel {
+        self.event.threat_level()
     }
 
     pub fn publish_timestamp(&self) -> &DateTime<Utc> {

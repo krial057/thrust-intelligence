@@ -1,7 +1,7 @@
 # rs_misp
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![Released API docs](https://docs.rs/rs_misp/badge.svg)](https://docs.rs/rs_misp)
-[![Crates.io Version](https://img.shields.io/crates/v/rs_misp.svg)](https://crates.io/crates/nom)
+[![Crates.io Version](https://img.shields.io/crates/v/rs_misp.svg)](https://crates.io/crates/rs_misp)
 [![CI](https://github.com/krial057/rs_misp/workflows/CI/badge.svg)](https://github.com/krial057/rs_misp/actions?query=workflow%3ACI)
 
  `rs_misp` is an unofficial client library to communicate with a [MISP](https://www.misp-project.org/)
