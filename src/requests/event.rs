@@ -1,21 +1,21 @@
-use crate::model::event::{EventFull, EventFullEmbedded, EventIdentifier};
+use crate::model::event::{EventFull, EventFullEmbedded, EventIdentifier, GenericEventIdentifier};
 use crate::{MispResult, MISP};
 use uuid::Uuid;
 
 pub enum DirectOrIndirectIdentifier {
-    Direct(EventIdentifier),
+    Direct(GenericEventIdentifier),
     Indirect(),
 }
 
 /// The Request's lifetime is bound to the client's lifetime
 pub struct EventRequest<'a> {
-    id: EventIdentifier,
+    id: GenericEventIdentifier,
     misp_client: &'a MISP,
     cached_local: Option<EventFull>,
 }
 
 impl EventRequest<'_> {
-    pub fn new<'a>(misp_client: &'a MISP, id: EventIdentifier) -> EventRequest<'a> {
+    pub fn new(misp_client: &MISP, id: GenericEventIdentifier) -> EventRequest {
         EventRequest {
             id,
             misp_client,
@@ -43,17 +43,17 @@ impl EventRequest<'_> {
         Ok(event_ref.clone())
     }
 
-    pub async fn id(&mut self) -> MispResult<u64> {
+    pub async fn id(&mut self) -> MispResult<EventIdentifier> {
         match self.id {
-            EventIdentifier::Global(_) => Ok(self.cached().await?.id()),
-            EventIdentifier::Local(id) => Ok(id),
+            GenericEventIdentifier::Global(_) => Ok(self.cached().await?.id()),
+            GenericEventIdentifier::Local(id) => Ok(id),
         }
     }
 
     pub async fn uuid(&mut self) -> MispResult<Uuid> {
         match self.id {
-            EventIdentifier::Global(uuid) => Ok(uuid),
-            EventIdentifier::Local(_) => Ok(self.cached().await?.uuid()),
+            GenericEventIdentifier::Global(uuid) => Ok(uuid),
+            GenericEventIdentifier::Local(_) => Ok(self.cached().await?.uuid()),
         }
     }
 }

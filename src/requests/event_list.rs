@@ -1,6 +1,6 @@
 use crate::model::event::{EventFull, EventFullEmbedded};
-use crate::model::organization::OrganizationIdentifier;
-use crate::util::option_date_to_mispdate;
+use crate::model::organization::GenericOrganizationIdentifier;
+use crate::model::serialization_helpers::option_date_to_mispdate;
 use crate::{MispResult, MISP};
 use chrono::{Date, Utc};
 use serde::{Deserialize, Serialize};
@@ -17,7 +17,7 @@ pub struct SearchQuery {
 
     #[serde(rename = "org")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    organization: Option<OrganizationIdentifier>,
+    organization: Option<GenericOrganizationIdentifier>,
 
     #[serde(rename = "from")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -48,7 +48,7 @@ impl SearchQuery {
         }
     }
 }
-/// The Request's lifetime is bound to the client's lifetime
+// The Request's lifetime is bound to the client's lifetime
 pub struct EventListRequest<'a> {
     search_query: Option<EmbeddedSearchQuery>,
     misp_client: &'a MISP,
@@ -56,10 +56,7 @@ pub struct EventListRequest<'a> {
 }
 
 impl EventListRequest<'_> {
-    pub fn new<'a>(
-        misp_client: &'a MISP,
-        search_query: Option<EmbeddedSearchQuery>,
-    ) -> EventListRequest<'a> {
+    pub fn new(misp_client: &MISP, search_query: Option<EmbeddedSearchQuery>) -> EventListRequest {
         EventListRequest {
             search_query,
             misp_client,
@@ -100,7 +97,7 @@ impl EventListRequest<'_> {
 
     pub fn from_organization(
         &mut self,
-        organization: impl Into<OrganizationIdentifier>,
+        organization: impl Into<GenericOrganizationIdentifier>,
     ) -> &mut Self {
         let search_query = self.search_query.get_or_insert(EmbeddedSearchQuery {
             request: SearchQuery::new(),

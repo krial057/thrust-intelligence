@@ -40,6 +40,7 @@ pub mod option_date_to_mispdate {
         }
     }
 
+    #[allow(dead_code)]
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<Date<Utc>>, D::Error>
     where
         D: Deserializer<'de>,
@@ -57,7 +58,8 @@ pub mod option_date_to_mispdate {
 
 pub mod datetime_to_epoch {
     use super::number_embedded_in_string;
-    use chrono::{DateTime, TimeZone, Utc};
+    use chrono::offset::TimeZone;
+    use chrono::{DateTime, Utc};
     use serde::{self, Deserializer, Serializer};
 
     pub fn serialize<S>(date: &DateTime<Utc>, serializer: S) -> Result<S::Ok, S::Error>
@@ -78,7 +80,8 @@ pub mod datetime_to_epoch {
 
 pub mod option_datetime_to_epoch {
     use super::number_embedded_in_string;
-    use chrono::{DateTime, TimeZone, Utc};
+    use chrono::offset::TimeZone;
+    use chrono::{DateTime, Utc};
     use serde::{self, Deserialize, Deserializer, Serializer};
 
     pub fn serialize<S>(option: &Option<DateTime<Utc>>, serializer: S) -> Result<S::Ok, S::Error>

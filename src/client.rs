@@ -7,11 +7,25 @@ use crate::error::MispResult;
 use crate::model::server_info::ServerInfo;
 use crate::requests::api::EventsApi;
 
-/// A MISP client. Used to connect to a MISP Server.
+/// This is the starting point: A MISP client. It us used to connect to a MISP Server.
 ///
 /// # Examples
 ///
 /// ```no_run
+/// # use rs_misp::{MISP, MispResult};
+/// # #[async_std::main]
+/// # async fn main() -> MispResult<()>  {
+///     let misp = MISP::new("https://misp.demo.com", "VERYSECRETTOKEN");
+///
+///     // Receive 3 latest event from Misp server
+///     let events = misp
+///         .events()
+///         .list()
+///         .limit(3)
+///         .retrieve()
+///         .await?;
+///     # Ok(())
+/// # }
 /// ```
 #[derive(Debug, Clone)]
 pub struct MISP {
@@ -20,11 +34,26 @@ pub struct MISP {
 }
 
 impl MISP {
-    /// Creates a new MISP Client
+    /// Creates a new MISP Client given a base URL and an authorization token.
     ///
     /// # Examples
     ///
     /// ```no_run
+    /// # use rs_misp::MISP;
+    /// let misp = MISP::new("https://misp.demo.com", "VERYSECRETTOKEN");
+    /// ```
+    /// As always, make sure to never store the secret token in the source code. It's not a good practice as
+    /// it could be leaked when the source code is published somewhere. A better approach is to store the secret
+    /// in an environment variable:
+    /// ```no_run
+    /// # use std::env;
+    /// # use rs_misp::MISP;
+    /// let base_url =
+    ///    env::var("MISP_ROOT_URL").expect("Please set the MISP_ROOT_URL environment variable");
+    /// let auth_token =
+    ///    env::var("MISP_AUTH_TOKEN").expect("Please set the MISP_AUTH_TOKEN environment variable");
+    ///
+    /// let misp = MISP::new(base_url, auth_token);
     /// ```
     pub fn new(base_url: impl AsRef<str>, auth_token: impl Into<String>) -> Self {
         Self {

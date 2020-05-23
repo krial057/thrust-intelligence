@@ -1,4 +1,4 @@
-use crate::model::event::EventIdentifier;
+use crate::model::event::GenericEventIdentifier;
 use crate::requests::event::EventRequest;
 use crate::requests::event_list::EventListRequest;
 use crate::MISP;
@@ -17,7 +17,7 @@ impl<'a> EventsApi<'a> {
         EventListRequest::new(self.misp_client, None)
     }
 
-    pub fn get(&self, event: impl Into<EventIdentifier>) -> EventRequest<'a> {
+    pub fn get(&self, event: impl Into<GenericEventIdentifier>) -> EventRequest<'a> {
         EventRequest::new(self.misp_client, event.into())
     }
 
