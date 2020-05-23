@@ -53,7 +53,7 @@ impl<'de> Deserialize<'de> for Distribution {
 mod tests {
     use crate::model::distribution::Distribution;
     #[test]
-    pub fn value_to_thread_level() {
+    pub fn value_to_distribution() {
         assert_eq!(
             Distribution::YourOrganizationOnly,
             serde_json::from_str("\"0\"").unwrap()
@@ -77,7 +77,7 @@ mod tests {
     }
 
     #[test]
-    pub fn thread_level_to_value() {
+    pub fn distribution_to_value() {
         assert_eq!(
             "\"0\"",
             serde_json::to_string(&Distribution::YourOrganizationOnly).unwrap()

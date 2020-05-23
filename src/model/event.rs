@@ -50,8 +50,6 @@ pub struct Event {
     //sighting_timestamp: DateTime<Utc>,
     disable_correlation: bool,
     extends_uuid: String, //TODO change to Option<Uuid>
-                          //Indirect members:
-                          //TODO
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
