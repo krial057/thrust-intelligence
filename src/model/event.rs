@@ -4,6 +4,7 @@ use super::organization::{OrganizationIdentifier, OrganizationTemporary};
 use super::serialization_helpers::{
     date_to_mispdate, datetime_to_epoch, number_embedded_in_string,
 };
+use crate::model::distribution::Distribution;
 use crate::model::threat_level::ThreatLevel;
 use chrono::{Date, DateTime, Utc};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -37,8 +38,7 @@ pub struct Event {
     orgc_id: OrganizationIdentifier,
     #[serde(with = "datetime_to_epoch")]
     timestamp: DateTime<Utc>,
-    #[serde(with = "number_embedded_in_string")]
-    distribution: u16,
+    distribution: Distribution,
     #[serde(with = "number_embedded_in_string")]
     sharing_group_id: u64,
     proposal_email_lock: bool,
@@ -192,8 +192,8 @@ impl Event {
         &self.timestamp
     }
 
-    pub fn distribution(&self) -> u16 {
-        self.distribution
+    pub fn distribution(&self) -> &Distribution {
+        &self.distribution
     }
 
     pub fn sharing_group(&self) -> u64 {
@@ -284,7 +284,7 @@ impl EventFull {
         self.event.timestamp()
     }
 
-    pub fn distribution(&self) -> u16 {
+    pub fn distribution(&self) -> &Distribution {
         self.event.distribution()
     }
 

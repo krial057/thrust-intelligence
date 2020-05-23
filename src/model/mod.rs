@@ -2,6 +2,7 @@
 //! It also contains the functions to serialize/deserialize the models to correct JSON objects
 
 pub mod attribute;
+pub mod distribution;
 pub mod event;
 pub mod object;
 pub mod organization;
