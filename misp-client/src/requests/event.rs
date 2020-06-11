@@ -1,5 +1,5 @@
-use misp_types::event::{EventFull, EventFullEmbedded, EventIdentifier, GenericEventIdentifier};
 use crate::{MispResult, MISP};
+use misp_types::event::{EventFull, EventFullEmbedded, EventIdentifier, GenericEventIdentifier};
 use uuid::Uuid;
 
 pub enum DirectOrIndirectIdentifier {

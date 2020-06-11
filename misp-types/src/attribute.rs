@@ -5,13 +5,13 @@ use core::fmt;
 use uuid::Uuid;
 
 #[cfg(feature = "serde")]
-use serde_json::Value;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-#[cfg(feature = "serde")]
 use super::serialization_helpers::{
     datetime_to_epoch, number_embedded_in_string, option_datetime_to_epoch,
 };
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+#[cfg(feature = "serde")]
+use serde_json::Value;
 
 #[derive(Debug, Copy, Clone)]
 pub struct AttributeIdentifier(pub u64);

@@ -1,12 +1,12 @@
-use misp_types::event::{EventFull, EventFullEmbedded};
-use misp_types::organization::GenericOrganizationIdentifier;
 use crate::{MispResult, MISP};
 use chrono::{Date, Utc};
+use misp_types::event::{EventFull, EventFullEmbedded};
+use misp_types::organization::GenericOrganizationIdentifier;
 
 #[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-#[cfg(feature = "serde")]
 use misp_types::serialization_helpers::option_date_to_mispdate;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct EventListResponse {

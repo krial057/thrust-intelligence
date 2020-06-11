@@ -1,7 +1,7 @@
-use misp_types::event::GenericEventIdentifier;
 use crate::requests::event::EventRequest;
 use crate::requests::event_list::EventListRequest;
 use crate::MISP;
+use misp_types::event::GenericEventIdentifier;
 
 pub struct EventsApi<'a> {
     misp_client: &'a MISP,

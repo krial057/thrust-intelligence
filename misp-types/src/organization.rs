@@ -3,9 +3,9 @@ use std::fmt;
 use uuid::Uuid;
 
 #[cfg(feature = "serde")]
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-#[cfg(feature = "serde")]
 use super::serialization_helpers::{datetime_to_epoch, number_embedded_in_string};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Debug, Copy, Clone)]
 pub struct OrganizationIdentifier(pub u64);

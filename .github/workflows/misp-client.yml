@@ -1,4 +1,4 @@
-name: CI
+name: misp-client
 on:
   pull_request:
     paths:

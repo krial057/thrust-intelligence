@@ -2,8 +2,8 @@ use surf::http_types::headers::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, USER_AGENT}
 use url::Url;
 
 use crate::error::MispResult;
-use misp_types::server_info::ServerInfo;
 use crate::requests::api::EventsApi;
+use misp_types::server_info::ServerInfo;
 
 #[cfg(feature = "serde")]
 use serde::de::DeserializeOwned;

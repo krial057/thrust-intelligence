@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-#[cfg(feature = "serde")]
 use crate::serialization_helpers::number_embedded_in_string;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// Represents the analysis level
 /// [RFC](https://github.com/MISP/misp-rfc/blob/master/misp-core-format/raw.md#analysis))

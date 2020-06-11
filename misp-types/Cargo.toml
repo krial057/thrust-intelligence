@@ -4,8 +4,8 @@ version = "0.1.0"
 authors = ["Alain Krier <krial057@gmail.com>"]
 license = "MIT"
 description = "An implementation of the types used by MISP"
-homepage = "https://github.com/krial057/rs_misp"
-repository = "https://github.com/krial057/rs_misp"
+homepage = "https://github.com/krial057/thrust_intelligence"
+repository = "https://github.com/krial057/thrust_intelligence"
 readme = "README.md"
 edition = "2018"
 
