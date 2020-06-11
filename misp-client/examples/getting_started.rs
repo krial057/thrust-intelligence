@@ -1,6 +1,6 @@
-extern crate rs_misp;
+extern crate misp_client;
 
-use rs_misp::*;
+use misp_client::*;
 use std::env;
 
 #[async_std::main]

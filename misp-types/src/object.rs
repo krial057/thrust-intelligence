@@ -1,13 +1,17 @@
-use super::attribute::AttributeFull;
+use crate::attribute::AttributeFull;
+use crate::event::EventIdentifier;
+use chrono::{DateTime, Utc};
+use core::fmt;
+use uuid::Uuid;
+
+#[cfg(feature = "serde")]
+use serde_json::Value;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+#[cfg(feature = "serde")]
 use super::serialization_helpers::{
     datetime_to_epoch, number_embedded_in_string, option_datetime_to_epoch,
 };
-use crate::model::event::EventIdentifier;
-use chrono::{DateTime, Utc};
-use core::fmt;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use serde_json::Value;
-use uuid::Uuid;
 
 #[derive(Debug, Copy, Clone)]
 pub struct ObjectIdentifier(pub u64);

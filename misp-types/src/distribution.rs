@@ -1,10 +1,15 @@
-use crate::model::serialization_helpers::number_embedded_in_string;
+#[cfg(feature = "serde")]
+use crate::serialization_helpers::number_embedded_in_string;
+
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// Distribution represents the basic distribution rules of the event.
 /// The system must adhere to the distribution setting for access control and for dissemination
 /// of the event.
 /// [RFC](https://github.com/MISP/misp-rfc/blob/master/misp-core-format/raw.md#distribution)
+// TODO: In the future, changing SharingGroup to SharingGroup(SharingGroupIdentifier) would
+// guarantee having a sharing_group_id...
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Distribution {
     YourOrganizationOnly,
@@ -12,46 +17,60 @@ pub enum Distribution {
     ConnectedCommunities,
     AllCommunities,
     SharingGroup,
+    Unsupported(u16),
 }
 
-impl Serialize for Distribution {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let v: u16 = match *self {
+impl From<u16> for Distribution {
+    /// Creates a MISP Distribution type from a number
+    fn from(distribution: u16) -> Distribution {
+        match distribution {
+            0 => Distribution::YourOrganizationOnly,
+            1 => Distribution::ThisCommunityOnly,
+            2 => Distribution::ConnectedCommunities,
+            3 => Distribution::AllCommunities,
+            4 => Distribution::SharingGroup,
+            _ => Distribution::Unsupported(distribution),
+        }
+    }
+}
+
+impl From<&Distribution> for u16 {
+    /// Converts a MISP Distribution type to a number.
+    fn from(distribution: &Distribution) -> u16 {
+        match distribution {
             Distribution::YourOrganizationOnly => 0,
             Distribution::ThisCommunityOnly => 1,
             Distribution::ConnectedCommunities => 2,
             Distribution::AllCommunities => 3,
             Distribution::SharingGroup => 4,
-        };
-        number_embedded_in_string::serialize(v, serializer)
+            Distribution::Unsupported(v) => *v,
+        }
     }
 }
 
+#[cfg(feature = "serde")]
+impl Serialize for Distribution {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        number_embedded_in_string::serialize(u16::from(self), serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
 impl<'de> Deserialize<'de> for Distribution {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let v = number_embedded_in_string::deserialize::<u16, D>(deserializer)?;
-        match v {
-            0 => Ok(Distribution::YourOrganizationOnly),
-            1 => Ok(Distribution::ThisCommunityOnly),
-            2 => Ok(Distribution::ConnectedCommunities),
-            3 => Ok(Distribution::AllCommunities),
-            4 => Ok(Distribution::SharingGroup),
-            _ => Err(serde::de::Error::custom(
-                "Invalid distribution value. Distribution value must be between 0 and 4!",
-            ))?,
-        }
+        Ok(number_embedded_in_string::deserialize::<u16, D>(deserializer)?.into())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::model::distribution::Distribution;
+    use crate::distribution::Distribution;
     #[test]
     pub fn value_to_distribution() {
         assert_eq!(

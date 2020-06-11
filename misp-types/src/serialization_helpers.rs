@@ -1,3 +1,4 @@
+#[cfg(feature = "serde")]
 pub mod date_to_mispdate {
     use chrono::{Date, NaiveDate, Utc};
     use serde::{self, Deserialize, Deserializer, Serializer};
@@ -24,6 +25,7 @@ pub mod date_to_mispdate {
     }
 }
 
+#[cfg(feature = "serde")]
 pub mod option_date_to_mispdate {
     use chrono::{Date, NaiveDate, Utc};
     use serde::{self, Deserialize, Deserializer, Serializer};
@@ -56,6 +58,7 @@ pub mod option_date_to_mispdate {
     }
 }
 
+#[cfg(feature = "serde")]
 pub mod datetime_to_epoch {
     use super::number_embedded_in_string;
     use chrono::offset::TimeZone;
@@ -78,6 +81,7 @@ pub mod datetime_to_epoch {
     }
 }
 
+#[cfg(feature = "serde")]
 pub mod option_datetime_to_epoch {
     use super::number_embedded_in_string;
     use chrono::offset::TimeZone;
@@ -111,6 +115,7 @@ pub mod option_datetime_to_epoch {
     }
 }
 
+#[cfg(feature = "serde")]
 pub mod number_embedded_in_string {
     use serde::{self, Deserialize, Deserializer, Serializer};
     use std::str::FromStr;

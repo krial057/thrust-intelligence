@@ -1,4 +1,6 @@
-use crate::model::serialization_helpers::number_embedded_in_string;
+#[cfg(feature = "serde")]
+use crate::serialization_helpers::number_embedded_in_string;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
@@ -10,42 +12,60 @@ pub enum ThreatLevel {
     Custom(u64),
 }
 
-impl Serialize for ThreatLevel {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let v = match *self {
-            ThreatLevel::High => 1,
-            ThreatLevel::Medium => 2,
-            ThreatLevel::Low => 3,
-            ThreatLevel::Undefined => 4,
-            ThreatLevel::Custom(i) => i,
-        };
-        number_embedded_in_string::serialize(v, serializer)
-    }
-}
-
-impl<'de> Deserialize<'de> for ThreatLevel {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        number_embedded_in_string::deserialize(deserializer).map(|v| match v {
+impl From<u64> for ThreatLevel {
+    /// Creates a MISP ThreadLevel type from a number
+    fn from(thread_level: u64) -> ThreatLevel {
+        match thread_level {
             1 => ThreatLevel::High,
             2 => ThreatLevel::Medium,
             3 => ThreatLevel::Low,
             4 => ThreatLevel::Undefined,
-            _ => ThreatLevel::Custom(v),
-        })
+            _ => ThreatLevel::Custom(thread_level),
+        }
+    }
+}
+
+impl From<&ThreatLevel> for u64 {
+    /// Converts a MISP Analysis type to a number.
+    fn from(thread_level: &ThreatLevel) -> u64 {
+        match thread_level {
+            ThreatLevel::High => 1,
+            ThreatLevel::Medium => 2,
+            ThreatLevel::Low => 3,
+            ThreatLevel::Undefined => 4,
+            ThreatLevel::Custom(thread_level) => *thread_level,
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for ThreatLevel {
+    /// Serializes the MISP ThreadLevel into a JSON string
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        number_embedded_in_string::serialize(u64::from(self), serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for ThreatLevel {
+    /// Deserializes the MISP ThreadLevel from a JSON string
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(number_embedded_in_string::deserialize::<u64, D>(deserializer)?.into())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::model::threat_level::ThreatLevel;
+    use crate::threat_level::ThreatLevel;
     #[test]
-    pub fn value_to_thread_level() {
+    #[cfg(feature = "serde")]
+    pub fn json_to_thread_level() {
         assert_eq!(ThreatLevel::High, serde_json::from_str("\"1\"").unwrap());
         assert_eq!(ThreatLevel::Medium, serde_json::from_str("\"2\"").unwrap());
         assert_eq!(ThreatLevel::Low, serde_json::from_str("\"3\"").unwrap());
@@ -60,7 +80,8 @@ mod tests {
     }
 
     #[test]
-    pub fn thread_level_to_value() {
+    #[cfg(feature = "serde")]
+    pub fn thread_level_to_json() {
         assert_eq!("\"1\"", serde_json::to_string(&ThreatLevel::High).unwrap());
         assert_eq!(
             "\"2\"",

@@ -1,13 +1,17 @@
+use crate::event::EventIdentifier;
+use crate::object::ObjectIdentifier;
+use chrono::{DateTime, Utc};
+use core::fmt;
+use uuid::Uuid;
+
+#[cfg(feature = "serde")]
+use serde_json::Value;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+#[cfg(feature = "serde")]
 use super::serialization_helpers::{
     datetime_to_epoch, number_embedded_in_string, option_datetime_to_epoch,
 };
-use crate::model::event::EventIdentifier;
-use crate::model::object::ObjectIdentifier;
-use chrono::{DateTime, Utc};
-use core::fmt;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use serde_json::Value;
-use uuid::Uuid;
 
 #[derive(Debug, Copy, Clone)]
 pub struct AttributeIdentifier(pub u64);
@@ -17,7 +21,8 @@ pub enum GenericAttributeIdentifier {
     Local(AttributeIdentifier),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Attribute {
     id: AttributeIdentifier,
     event_id: EventIdentifier,

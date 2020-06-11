@@ -1,11 +1,14 @@
-use serde::de::DeserializeOwned;
-use serde::Serialize;
-use surf::http_types::headers::{HeaderName, CONTENT_TYPE};
+use surf::http_types::headers::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
 use url::Url;
 
 use crate::error::MispResult;
-use crate::model::server_info::ServerInfo;
+use misp_types::server_info::ServerInfo;
 use crate::requests::api::EventsApi;
+
+#[cfg(feature = "serde")]
+use serde::de::DeserializeOwned;
+#[cfg(feature = "serde")]
+use serde::Serialize;
 
 /// This is the starting point: A MISP client. It us used to connect to a MISP Server.
 ///
@@ -66,17 +69,12 @@ impl MISP {
         &self,
         endpoint: impl AsRef<str>,
     ) -> MispResult<T> {
-        // TODO replace when https://github.com/http-rs/http-types/pull/107 merges into surf
-        let authorization_header_name: HeaderName = "authorization".parse().unwrap();
-        let user_agent_header_name: HeaderName = "user-agent".parse().unwrap();
-        let accept_header_name: HeaderName = "accept".parse().unwrap();
-
         let endpoint_url = self.base_url.join(endpoint.as_ref())?;
         let body_bytes = surf::get(endpoint_url)
-            .set_header(authorization_header_name, &self.auth_token)
-            .set_header(accept_header_name, "application/json")
+            .set_header(AUTHORIZATION, self.auth_token.as_str())
+            .set_header(ACCEPT, "application/json")
             .set_header(CONTENT_TYPE, "application/json")
-            .set_header(user_agent_header_name, "rs_misp")
+            .set_header(USER_AGENT, "rs_misp")
             .recv_bytes()
             .await?;
         println!("{}", String::from_utf8(body_bytes.clone()).unwrap());
@@ -88,10 +86,6 @@ impl MISP {
         endpoint: impl AsRef<str>,
         json: &impl Serialize,
     ) -> MispResult<T> {
-        // TODO replace when https://github.com/http-rs/http-types/pull/107 merges into surf
-        let authorization_header_name: HeaderName = "authorization".parse().unwrap();
-        let user_agent_header_name: HeaderName = "user-agent".parse().unwrap();
-        let accept_header_name: HeaderName = "accept".parse().unwrap();
         /*
                 println!(
                     "Sending json: {:?}",
@@ -100,10 +94,10 @@ impl MISP {
         */
         let endpoint_url = self.base_url.join(endpoint.as_ref())?;
         let body_bytes = surf::post(endpoint_url)
-            .set_header(authorization_header_name, &self.auth_token)
-            .set_header(accept_header_name, "application/json")
+            .set_header(AUTHORIZATION, self.auth_token.as_str())
+            .set_header(ACCEPT, "application/json")
             .set_header(CONTENT_TYPE, "application/json")
-            .set_header(user_agent_header_name, "rs_misp")
+            .set_header(USER_AGENT, "rs_misp")
             .body_json(json)?
             .recv_bytes()
             .await?;

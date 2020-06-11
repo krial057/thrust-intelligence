@@ -1,0 +1,36 @@
+[package]
+name = "misp-client"
+version = "0.1.0"
+authors = ["Alain Krier <krial057@gmail.com>"]
+license = "MIT"
+description = "An unofficial client library to communicate with a MISP(https://www.misp-project.org/) server instance."
+homepage = "https://github.com/krial057/rs_misp"
+repository = "https://github.com/krial057/rs_misp"
+readme = "README.md"
+edition = "2018"
+
+[dependencies]
+async-std = {version = "1.6.0"}
+surf = {version = "2.0.0-alpha.4"}
+url = "2.1.1"
+thiserror = "1.0.16"
+uuid = { version = "0.8", features = ["serde", "v4"] }
+log = "0.4.8"
+chrono = "0.4.11"
+serde = {version = "1.0", optional = true, features = ["derive"]}
+serde_json = {version = "1.0", optional = true}
+
+[dependencies.misp-types]
+version = "0.1"
+path = "../misp-types"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dev-dependencies]
+femme = "1.3.0"
+async-std = { version = "1", features = ["attributes"] }
+
+[features]
+default = ["json-using-serde"]
+json-using-serde = ["serde", "serde_json"]

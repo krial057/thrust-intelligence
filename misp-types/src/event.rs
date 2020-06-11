@@ -1,16 +1,23 @@
 use super::attribute::AttributeFull;
 use super::object::ObjectFull;
 use super::organization::{OrganizationIdentifier, OrganizationTemporary};
+
+use crate::analysis::Analysis;
+use crate::distribution::Distribution;
+use crate::threat_level::ThreatLevel;
+use chrono::{Date, DateTime, Utc};
+use std::fmt;
+use uuid::Uuid;
+
+#[cfg(feature = "serde")]
+use serde_json::Value;
+
+#[cfg(feature = "serde")]
 use super::serialization_helpers::{
     date_to_mispdate, datetime_to_epoch, number_embedded_in_string,
 };
-use crate::model::distribution::Distribution;
-use crate::model::threat_level::ThreatLevel;
-use chrono::{Date, DateTime, Utc};
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use serde_json::Value;
-use std::fmt;
-use uuid::Uuid;
 
 #[derive(Debug, Copy, Clone)]
 pub struct EventIdentifier(pub u64);
@@ -31,8 +38,7 @@ pub struct Event {
     //user_id: u64,
     uuid: Uuid,
     published: bool,
-    #[serde(with = "number_embedded_in_string")]
-    analysis: u16,
+    analysis: Analysis,
     #[serde(with = "number_embedded_in_string")]
     attribute_count: u64,
     orgc_id: OrganizationIdentifier,
@@ -173,8 +179,8 @@ impl Event {
         self.published
     }
 
-    pub fn analysis(&self) -> u16 {
-        self.analysis
+    pub fn analysis(&self) -> &Analysis {
+        &self.analysis
     }
 
     pub fn attribute_count(&self) -> u64 {
@@ -265,7 +271,7 @@ impl EventFull {
         self.event.published()
     }
 
-    pub fn analysis(&self) -> u16 {
+    pub fn analysis(&self) -> &Analysis {
         self.event.analysis()
     }
 

@@ -1,4 +1,4 @@
-use crate::model::event::{EventFull, EventFullEmbedded, EventIdentifier, GenericEventIdentifier};
+use misp_types::event::{EventFull, EventFullEmbedded, EventIdentifier, GenericEventIdentifier};
 use crate::{MispResult, MISP};
 use uuid::Uuid;
 

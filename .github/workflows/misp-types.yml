@@ -1,12 +1,21 @@
 name: CI
 on:
   pull_request:
+    paths:
+      - "misp-types/**"
+      - "Cargo.*"
   push:
     branches:
       - master
 
+defaults:
+  run:
+    working-directory: misp-types
+
 env:
   RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: "-Dwarnings"
 
 jobs:
   style:

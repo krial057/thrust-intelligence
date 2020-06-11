@@ -1,4 +1,4 @@
-use crate::model::event::GenericEventIdentifier;
+use misp_types::event::GenericEventIdentifier;
 use crate::requests::event::EventRequest;
 use crate::requests::event_list::EventListRequest;
 use crate::MISP;

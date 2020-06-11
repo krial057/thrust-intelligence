@@ -1,3 +1,4 @@
+#[cfg(feature = "serde")]
 use serde::export::Formatter;
 
 pub type MispResult<T> = std::result::Result<T, MispError>;

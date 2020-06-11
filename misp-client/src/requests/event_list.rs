@@ -1,9 +1,12 @@
-use crate::model::event::{EventFull, EventFullEmbedded};
-use crate::model::organization::GenericOrganizationIdentifier;
-use crate::model::serialization_helpers::option_date_to_mispdate;
+use misp_types::event::{EventFull, EventFullEmbedded};
+use misp_types::organization::GenericOrganizationIdentifier;
 use crate::{MispResult, MISP};
 use chrono::{Date, Utc};
+
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "serde")]
+use misp_types::serialization_helpers::option_date_to_mispdate;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct EventListResponse {
@@ -23,6 +26,11 @@ pub struct SearchQuery {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(with = "option_date_to_mispdate")]
     after: Option<Date<Utc>>,
+
+    #[serde(rename = "to")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(with = "option_date_to_mispdate")]
+    before: Option<Date<Utc>>,
 
     #[serde(rename = "eventinfo")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -45,6 +53,7 @@ impl SearchQuery {
             after: None,
             info: None,
             limit: None,
+            before: None,
         }
     }
 }
@@ -91,10 +100,12 @@ impl EventListRequest<'_> {
         Ok(self.cached_local.as_ref().unwrap())
     }
 
+    /// Downloads all the events matching the set filters
     pub async fn retrieve(&mut self) -> MispResult<Vec<EventFull>> {
         Ok(self.cached().await?.clone())
     }
 
+    /// Filters the events based on the organization that is currently owning it.
     pub fn from_organization(
         &mut self,
         organization: impl Into<GenericOrganizationIdentifier>,
@@ -106,22 +117,32 @@ impl EventListRequest<'_> {
         self
     }
 
-    pub fn containing_info(&mut self, str: impl AsRef<str>) -> &mut Self {
+    /// Filters events that contain a specific text inside their info. It can be a substring of the
+    /// actual event info.
+    ///
+    /// If you only want to find events with the exact same event info, use
+    /// [`with_exact_info`](#method.with_exact_info). It will not take substrings into consideration.
+    pub fn containing_info(&mut self, search: impl AsRef<str>) -> &mut Self {
         let search_query = self.search_query.get_or_insert(EmbeddedSearchQuery {
             request: SearchQuery::new(),
         });
-        search_query.request.info = Some(format!("%{}%", str.as_ref()));
+        search_query.request.info = Some(format!("%{}%", search.as_ref()));
         self
     }
 
-    pub fn with_exact_info(&mut self, str: impl Into<String>) -> &mut Self {
+    /// Filters events that have a specific text as its info.
+    ///
+    /// If you also want to find events where the search query is only a substring of the actual
+    /// event info, use [`containing_info`](#method.containing_info) instead.
+    pub fn with_exact_info(&mut self, search: impl Into<String>) -> &mut Self {
         let search_query = self.search_query.get_or_insert(EmbeddedSearchQuery {
             request: SearchQuery::new(),
         });
-        search_query.request.info = Some(str.into());
+        search_query.request.info = Some(search.into());
         self
     }
 
+    /// Filters events that happened after a specific date.
     pub fn after(&mut self, date: Date<Utc>) -> &mut Self {
         let search_query = self.search_query.get_or_insert(EmbeddedSearchQuery {
             request: SearchQuery::new(),
@@ -130,6 +151,16 @@ impl EventListRequest<'_> {
         self
     }
 
+    /// Filters events that happened before a specific date.
+    pub fn before(&mut self, date: Date<Utc>) -> &mut Self {
+        let search_query = self.search_query.get_or_insert(EmbeddedSearchQuery {
+            request: SearchQuery::new(),
+        });
+        search_query.request.before = Some(date);
+        self
+    }
+
+    /// Limits the amount of results
     pub fn limit(&mut self, limit: u64) -> &mut Self {
         let search_query = self.search_query.get_or_insert(EmbeddedSearchQuery {
             request: SearchQuery::new(),

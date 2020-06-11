@@ -61,11 +61,11 @@
 
 mod client;
 mod error;
-pub mod model;
 pub mod requests;
 
 pub use client::MISP;
 pub use error::{MispError, MispResult};
+pub use misp_types;
 
 #[cfg(test)]
 mod tests {}
