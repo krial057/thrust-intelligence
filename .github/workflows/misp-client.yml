@@ -37,7 +37,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
+          args: --all -- --check --manifest-path misp-client/Cargo.toml
 
   test:
     name: Test ${{ matrix.rust }} on ${{ matrix.os }}
@@ -72,6 +72,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
+          args: --manifest-path misp-client/Cargo.toml
 
   doc:
     name: Build docs
@@ -92,3 +93,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: rustdoc
+          args: --manifest-path misp-client/Cargo.toml

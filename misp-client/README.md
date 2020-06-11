@@ -1,22 +1,22 @@
-# rs_misp
+# misp-client
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
-[![Released API docs](https://docs.rs/rs_misp/badge.svg)](https://docs.rs/rs_misp)
-[![Crates.io Version](https://img.shields.io/crates/v/rs_misp.svg)](https://crates.io/crates/rs_misp)
-[![CI](https://github.com/krial057/rs_misp/workflows/CI/badge.svg)](https://github.com/krial057/rs_misp/actions?query=workflow%3ACI)
+[![Released API docs](https://docs.rs/misp-client/badge.svg)](https://docs.rs/misp-client)
+[![Crates.io Version](https://img.shields.io/crates/v/misp-client.svg)](https://crates.io/crates/misp-client)
+[![CI](https://github.com/krial057/thrust-intelligence/workflows/misp-client/badge.svg)](https://github.com/krial057/thrust-intelligence/actions?query=workflow%3Amisp-client)
 
- `rs_misp` is an unofficial client library to communicate with a [MISP](https://www.misp-project.org/)
+ `misp-client` is an unofficial client library to communicate with a [MISP](https://www.misp-project.org/)
  server instance.
- Its focus is to be easy to use, performant and strongly typed.
+ Its focus is to be easy to use, fast and strongly typed.
  
  __This library is far from production-ready! Currently, it can almost only run the simple example provided below.__
  
  *This project is unofficial and not associated with the [MISP project](https://www.misp-project.org/).*
  ## Example
- A simple example fetching covid deaths in Luxembourg from the past 7 days using the
- COVID-19 MISP
+ A simple example fetching COVID-19 deaths in Luxembourg from the past 7 days using the
+ COVID-19 MISP server instance:
  ```rust
  use chrono::{Duration, Utc};
- use rs_misp::*;
+ use misp_client::*;
  use std::env;
 
  #[async_std::main]
@@ -68,7 +68,7 @@
 
 ## Roadmap
 - [x] Design library structure 
-- [x] Add passive functionallity (get) for events and attributes
+- [x] Add passive functionality (get) for events and attributes
 - [ ] Documentation & tests
 - [ ] Add more search filters 
 - [ ] Add other objects (galaxies, tags, ...)
