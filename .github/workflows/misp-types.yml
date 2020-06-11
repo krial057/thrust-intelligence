@@ -34,10 +34,11 @@ jobs:
           components: rustfmt
 
       - name: cargo fmt --check
-        uses: actions-rs/cargo@v1
+        uses: marcopolo/cargo@master
         with:
           command: fmt
-          args: --all -- --check --manifest-path misp-client/Cargo.toml
+          args: --all -- --check
+          working-directory: misp-types
 
   test:
     name: Test ${{ matrix.rust }} on ${{ matrix.os }}
@@ -69,10 +70,11 @@ jobs:
           override: true
 
       - name: Test
-        uses: actions-rs/cargo@v1
+        uses: marcopolo/cargo@master
         with:
           command: test
-          args: --manifest-path misp-client/Cargo.toml
+          working-directory: misp-types
+
 
   doc:
     name: Build docs
@@ -90,7 +92,7 @@ jobs:
           override: true
 
       - name: cargo doc
-        uses: actions-rs/cargo@v1
+        uses: marcopolo/cargo@master
         with:
           command: rustdoc
-          args: --manifest-path misp-client/Cargo.toml
+          working-directory: misp-types
