@@ -15,7 +15,7 @@ use serde::Serialize;
 /// # Examples
 ///
 /// ```no_run
-/// # use rs_misp::{MISP, MispResult};
+/// # use misp_client::{MISP, MispResult};
 /// # #[async_std::main]
 /// # async fn main() -> MispResult<()>  {
 ///     let misp = MISP::new("https://misp.demo.com", "VERYSECRETTOKEN");
@@ -42,7 +42,7 @@ impl MISP {
     /// # Examples
     ///
     /// ```no_run
-    /// # use rs_misp::MISP;
+    /// # use misp_client::MISP;
     /// let misp = MISP::new("https://misp.demo.com", "VERYSECRETTOKEN");
     /// ```
     /// As always, make sure to never store the secret token in the source code. It's not a good practice as
@@ -50,7 +50,7 @@ impl MISP {
     /// in an environment variable:
     /// ```no_run
     /// # use std::env;
-    /// # use rs_misp::MISP;
+    /// # use misp_client::MISP;
     /// let base_url =
     ///    env::var("MISP_ROOT_URL").expect("Please set the MISP_ROOT_URL environment variable");
     /// let auth_token =

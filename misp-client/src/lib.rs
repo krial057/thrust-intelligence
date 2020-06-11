@@ -9,7 +9,7 @@
 //! COVID-19 MISP
 //! ```no_run
 //! use chrono::{Duration, Utc};
-//! use rs_misp::*;
+//! use misp_client::*;
 //! use std::env;
 //!
 //! #[async_std::main]
